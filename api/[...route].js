@@ -17,6 +17,18 @@ async function ensureConnection() {
   return cachedConnection;
 }
 
+async function ensureDbOrFail(res) {
+  try {
+    await ensureConnection();
+    return true;
+  } catch (error) {
+    const message = error?.message || 'Falha na conexao com o banco de dados.';
+    console.error(error);
+    sendJson(res, 500, { message });
+    return false;
+  }
+}
+
 function toApiModel(doc) {
   const raw = doc.toObject();
   return {
@@ -45,7 +57,6 @@ function getRouteParts(req) {
 function withErrorHandling(handler) {
   return async (req, res) => {
     try {
-      await ensureConnection();
       await handler(req, res);
     } catch (error) {
       if (error instanceof mongoose.Error.ValidationError) {
@@ -76,6 +87,8 @@ const handler = withErrorHandling(async (req, res) => {
   }
 
   if (resource === 'clientes') {
+    if (!(await ensureDbOrFail(res))) return;
+
     if (req.method === 'GET' && !id) {
       const clientes = await Cliente.find().sort({ createdAt: -1 });
       return sendJson(res, 200, clientes.map(toApiModel));
@@ -102,6 +115,8 @@ const handler = withErrorHandling(async (req, res) => {
   }
 
   if (resource === 'vendas') {
+    if (!(await ensureDbOrFail(res))) return;
+
     if (req.method === 'GET' && !id) {
       const vendas = await Venda.find().sort({ createdAt: -1 });
       return sendJson(res, 200, vendas.map(toApiModel));
