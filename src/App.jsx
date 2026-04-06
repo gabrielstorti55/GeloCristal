@@ -388,7 +388,7 @@ export default function App() {
         <Topbar title={sectionTitleMap[activeSection]} dateLabel={topbarDate} />
 
         <div className="content">
-          {isLoadingData && <p>Carregando dados...</p>}
+          {isLoadingData && <div className="loading-state">Carregando dados...</div>}
           <Routes>
             <Route
               path="/dashboard"
