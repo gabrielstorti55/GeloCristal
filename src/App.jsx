@@ -75,8 +75,8 @@ export default function App() {
       try {
         const [clientesData, vendasData] = await Promise.all([api.listClientes(), api.listVendas()]);
         if (!active) return;
-        setClientes(clientesData || []);
-        setVendas(vendasData || []);
+        setClientes(Array.isArray(clientesData) ? clientesData : []);
+        setVendas(Array.isArray(vendasData) ? vendasData : []);
       } catch (error) {
         if (!active) return;
         showToast(error.message || 'Nao foi possivel carregar dados do servidor.');
