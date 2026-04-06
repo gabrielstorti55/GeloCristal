@@ -51,6 +51,13 @@ function getRouteParts(req) {
   const route = req.query?.route;
   if (Array.isArray(route)) return route;
   if (typeof route === 'string' && route.length) return [route];
+
+  const pathname = (req.url || '').split('?')[0] || '';
+  const normalized = pathname.replace(/^\/api\/?/, '');
+  if (!normalized) return [];
+
+  return normalized.split('/').filter(Boolean);
+
   return [];
 }
 
