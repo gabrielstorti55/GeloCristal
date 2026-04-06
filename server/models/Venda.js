@@ -17,4 +17,4 @@ const vendaSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model('Venda', vendaSchema);
+export default mongoose.models.Venda || mongoose.model('Venda', vendaSchema);
